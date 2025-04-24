@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Edit, MoreHorizontal, Trash } from "lucide-react"
@@ -47,12 +45,13 @@ const allEvents = [
 
 interface EventsListProps {
   date?: Date
+  events?: any[]
+  onDeleteEvent?: (id: number) => void
+  onDragStart?: (event: any) => void
 }
 
-export default function EventsList({ date }: EventsListProps) {
-  const [events, setEvents] = useState(allEvents)
-
-  // Filter events for the selected date
+export default function EventsList({ date, events = allEvents, onDeleteEvent, onDragStart }: EventsListProps) {
+  // Filter events for the selected date if date is provided
   const filteredEvents = date
     ? events.filter(
         (event) =>
@@ -63,7 +62,9 @@ export default function EventsList({ date }: EventsListProps) {
     : events
 
   const handleDeleteEvent = (id: number) => {
-    setEvents(events.filter((event) => event.id !== id))
+    if (onDeleteEvent) {
+      onDeleteEvent(id)
+    }
   }
 
   const getCategoryColor = (category: string) => {
@@ -87,7 +88,23 @@ export default function EventsList({ date }: EventsListProps) {
     <div className="space-y-4">
       {filteredEvents.length > 0 ? (
         filteredEvents.map((event) => (
-          <div key={event.id} className="p-4 rounded-lg border bg-white dark:bg-slate-800">
+          <div
+            key={event.id}
+            className="p-4 rounded-lg border bg-white dark:bg-slate-800 cursor-move"
+            draggable
+            onDragStart={(e) => {
+              if (onDragStart) {
+                e.dataTransfer.setData(
+                  "text/plain",
+                  JSON.stringify({
+                    id: event.id,
+                    type: "event",
+                  }),
+                )
+                onDragStart(event)
+              }
+            }}
+          >
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-semibold">{event.title}</h3>
@@ -125,9 +142,6 @@ export default function EventsList({ date }: EventsListProps) {
       ) : (
         <div className="text-center py-8">
           <p className="text-slate-500 dark:text-slate-400">No events scheduled for this day</p>
-          <Button variant="outline" className="mt-4">
-            Add Event
-          </Button>
         </div>
       )}
     </div>

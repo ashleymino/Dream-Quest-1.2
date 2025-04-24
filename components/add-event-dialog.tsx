@@ -18,9 +18,10 @@ interface AddEventDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   selectedDate?: Date
+  onAddEvent: (event: any) => void
 }
 
-export default function AddEventDialog({ open, onOpenChange, selectedDate }: AddEventDialogProps) {
+export default function AddEventDialog({ open, onOpenChange, selectedDate, onAddEvent }: AddEventDialogProps) {
   const [eventData, setEventData] = useState({
     title: "",
     startTime: "09:00",
@@ -29,8 +30,21 @@ export default function AddEventDialog({ open, onOpenChange, selectedDate }: Add
   })
 
   const handleSubmit = () => {
-    // Here you would typically save the event to your state or database
-    console.log("New event:", { ...eventData, date: selectedDate })
+    if (!eventData.title || !eventData.category) {
+      return // Don't submit if required fields are missing
+    }
+
+    // Create a new event object
+    const newEvent = {
+      id: Date.now(), // Use timestamp as a simple unique ID
+      title: eventData.title,
+      time: `${eventData.startTime} - ${eventData.endTime}`,
+      category: eventData.category,
+      date: selectedDate || new Date(),
+    }
+
+    // Call the parent component's handler to add the event
+    onAddEvent(newEvent)
 
     // Reset form and close dialog
     setEventData({

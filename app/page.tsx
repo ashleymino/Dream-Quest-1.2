@@ -3,14 +3,15 @@ import GoalsList from "@/components/goals-list"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
+import CloudCharacter from "@/components/cloud-character"
 
 export default function Home() {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 relative z-10">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-        <div>
+        <div className="flex items-center">
           <h1 className="text-3xl font-bold text-purple-800 dark:text-purple-300">My Dream Board</h1>
-          <p className="text-slate-600 dark:text-slate-300 mt-2">Visualize your dreams and aspirations</p>
+          <CloudCharacter className="ml-2 transform -translate-y-1" />
         </div>
         <div className="flex gap-4 mt-4 md:mt-0">
           <Button

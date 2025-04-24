@@ -57,3 +57,50 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Dreamy background styles */
+.bg-dreamy-gradient {
+  background: linear-gradient(135deg, #e0f7ff 0%, #c4e0ff 25%, #d9d2ff 50%, #c4e0ff 75%, #e0f7ff 100%);
+}
+
+.bg-size-200 {
+  background-size: 400% 400%;
+}
+
+@keyframes dreamy-bg-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-dreamy-bg {
+  animation: dreamy-bg-animation 15s ease infinite;
+}
+
+/* Dreamy clouds effect */
+.dreamy-clouds {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 70% 90%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 20%);
+}
+
+.dark .dreamy-clouds {
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 80% 40%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
+    radial-gradient(circle at 70% 90%, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%);
+}

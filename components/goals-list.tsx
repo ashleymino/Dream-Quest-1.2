@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -33,11 +31,16 @@ const initialGoals = [
   },
 ]
 
-export default function GoalsList() {
-  const [goals, setGoals] = useState(initialGoals)
+interface GoalsListProps {
+  goals?: any[]
+  onDeleteGoal?: (id: number) => void
+}
 
+export default function GoalsList({ goals = initialGoals, onDeleteGoal }: GoalsListProps) {
   const handleDeleteGoal = (id: number) => {
-    setGoals(goals.filter((goal) => goal.id !== id))
+    if (onDeleteGoal) {
+      onDeleteGoal(id)
+    }
   }
 
   const getCategoryColor = (category: string) => {
@@ -48,6 +51,10 @@ export default function GoalsList() {
         return "bg-green-500"
       case "Personal":
         return "bg-purple-500"
+      case "Career":
+        return "bg-orange-500"
+      case "Financial":
+        return "bg-yellow-500"
       default:
         return "bg-slate-500"
     }

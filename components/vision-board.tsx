@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { PlusCircle, X } from "lucide-react"
+import ImageUpload from "./image-upload"
 
 // Mock data for vision board items
 const initialItems = [
@@ -25,6 +26,7 @@ const initialItems = [
     description: "Visit Tokyo, Kyoto, and Mount Fuji",
     image: "/placeholder.svg?height=200&width=300",
     color: "bg-gradient-to-br from-blue-500 to-purple-500",
+    customImage: null,
   },
   {
     id: 2,
@@ -32,6 +34,7 @@ const initialItems = [
     description: "Become conversational in Spanish by the end of the year",
     image: "/placeholder.svg?height=200&width=300",
     color: "bg-gradient-to-br from-orange-500 to-pink-500",
+    customImage: null,
   },
   {
     id: 3,
@@ -39,6 +42,7 @@ const initialItems = [
     description: "Complete a full marathon in under 4 hours",
     image: "/placeholder.svg?height=200&width=300",
     color: "bg-gradient-to-br from-green-500 to-teal-500",
+    customImage: null,
   },
   {
     id: 4,
@@ -46,6 +50,7 @@ const initialItems = [
     description: "Finish my novel and get it published",
     image: "/placeholder.svg?height=200&width=300",
     color: "bg-gradient-to-br from-red-500 to-yellow-500",
+    customImage: null,
   },
 ]
 
@@ -57,6 +62,7 @@ export default function VisionBoard() {
     description: "",
     image: "/placeholder.svg?height=200&width=300",
     color: "bg-gradient-to-br from-blue-500 to-purple-500",
+    customImage: null as string | null,
   })
 
   const handleAddItem = () => {
@@ -67,6 +73,7 @@ export default function VisionBoard() {
         description: "",
         image: "/placeholder.svg?height=200&width=300",
         color: "bg-gradient-to-br from-blue-500 to-purple-500",
+        customImage: null,
       })
       setIsAddOpen(false)
     }
@@ -93,18 +100,26 @@ export default function VisionBoard() {
             {items.map((item) => (
               <div
                 key={item.id}
-                className={`relative rounded-lg overflow-hidden h-48 flex flex-col justify-end ${item.color} text-white shadow-lg hover:shadow-xl transition-shadow`}
+                className={`relative rounded-lg overflow-hidden h-48 flex flex-col justify-end shadow-lg hover:shadow-xl transition-shadow`}
+                style={{
+                  backgroundImage: item.customImage ? `url(${item.customImage})` : "none",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
               >
+                <div
+                  className={`absolute inset-0 ${!item.customImage ? item.color : ""} ${item.customImage ? "bg-black/20" : ""}`}
+                ></div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute top-2 right-2 h-6 w-6 bg-black/20 hover:bg-black/40 text-white rounded-full p-1"
+                  className="absolute top-2 right-2 h-6 w-6 bg-black/20 hover:bg-black/40 text-white rounded-full p-1 z-10"
                   onClick={() => handleRemoveItem(item.id)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
-                <div className="p-4 bg-gradient-to-t from-black/70 to-transparent">
-                  <h3 className="font-bold text-lg">{item.title}</h3>
+                <div className="p-4 bg-gradient-to-t from-black/70 to-transparent relative z-10">
+                  <h3 className="font-bold text-lg text-white">{item.title}</h3>
                   <p className="text-sm text-white/90">{item.description}</p>
                 </div>
               </div>
@@ -117,11 +132,12 @@ export default function VisionBoard() {
                   <span className="text-slate-500 dark:text-slate-400 font-medium">Add to Vision Board</span>
                 </div>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-[550px]">
                 <DialogHeader>
                   <DialogTitle>Add to Vision Board</DialogTitle>
                   <DialogDescription>
-                    Create a new item for your vision board. Add a title, description, and choose a color theme.
+                    Create a new item for your vision board. Add a title, description, and choose a color theme or
+                    upload an image.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
@@ -143,8 +159,14 @@ export default function VisionBoard() {
                       placeholder="Describe your vision or goal"
                     />
                   </div>
+
+                  <ImageUpload
+                    value={newItem.customImage}
+                    onChange={(imageUrl) => setNewItem({ ...newItem, customImage: imageUrl })}
+                  />
+
                   <div className="grid gap-2">
-                    <Label>Color Theme</Label>
+                    <Label>Color Theme {newItem.customImage && "(Used if no image is uploaded)"}</Label>
                     <div className="flex flex-wrap gap-2">
                       {colorOptions.map((color, index) => (
                         <div

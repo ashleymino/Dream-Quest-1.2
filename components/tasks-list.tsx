@@ -1,6 +1,4 @@
 "use client"
-
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -48,12 +46,14 @@ const allTasks = [
 
 interface TasksListProps {
   date?: Date
+  tasks?: any[]
+  onToggleTask?: (id: number) => void
+  onDeleteTask?: (id: number) => void
+  onDragStart?: (task: any) => void
 }
 
-export default function TasksList({ date }: TasksListProps) {
-  const [tasks, setTasks] = useState(allTasks)
-
-  // Filter tasks for the selected date
+export default function TasksList({ date, tasks = allTasks, onToggleTask, onDeleteTask, onDragStart }: TasksListProps) {
+  // Filter tasks for the selected date if date is provided
   const filteredTasks = date
     ? tasks.filter(
         (task) =>
@@ -64,11 +64,15 @@ export default function TasksList({ date }: TasksListProps) {
     : tasks
 
   const handleToggleTask = (id: number) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
+    if (onToggleTask) {
+      onToggleTask(id)
+    }
   }
 
   const handleDeleteTask = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id))
+    if (onDeleteTask) {
+      onDeleteTask(id)
+    }
   }
 
   const getPriorityColor = (priority: string) => {
@@ -90,11 +94,29 @@ export default function TasksList({ date }: TasksListProps) {
         filteredTasks.map((task) => (
           <div
             key={task.id}
-            className={`p-4 rounded-lg border bg-white dark:bg-slate-800 ${task.completed ? "opacity-70" : ""}`}
+            className={`p-4 rounded-lg border bg-white dark:bg-slate-800 ${task.completed ? "opacity-70" : ""} cursor-move`}
+            draggable
+            onDragStart={(e) => {
+              if (onDragStart) {
+                e.dataTransfer.setData(
+                  "text/plain",
+                  JSON.stringify({
+                    id: task.id,
+                    type: "task",
+                  }),
+                )
+                onDragStart(task)
+              }
+            }}
           >
             <div className="flex justify-between items-start">
               <div className="flex items-start gap-3">
-                <Checkbox checked={task.completed} onCheckedChange={() => handleToggleTask(task.id)} className="mt-1" />
+                <Checkbox
+                  checked={task.completed}
+                  onCheckedChange={() => handleToggleTask(task.id)}
+                  className="mt-1"
+                  onClick={(e) => e.stopPropagation()} // Prevent drag when clicking checkbox
+                />
                 <div>
                   <h3
                     className={`font-semibold ${task.completed ? "line-through text-slate-500 dark:text-slate-400" : ""}`}
@@ -110,7 +132,12 @@ export default function TasksList({ date }: TasksListProps) {
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={(e) => e.stopPropagation()} // Prevent drag when clicking menu
+                  >
                     <MoreHorizontal className="h-4 w-4" />
                     <span className="sr-only">More</span>
                   </Button>
@@ -132,9 +159,6 @@ export default function TasksList({ date }: TasksListProps) {
       ) : (
         <div className="text-center py-8">
           <p className="text-slate-500 dark:text-slate-400">No tasks for this day</p>
-          <Button variant="outline" className="mt-4">
-            Add Task
-          </Button>
         </div>
       )}
     </div>

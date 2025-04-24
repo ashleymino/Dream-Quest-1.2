@@ -18,9 +18,10 @@ import { Textarea } from "@/components/ui/textarea"
 interface AddGoalDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onAddGoal: (goal: any) => void
 }
 
-export default function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
+export default function AddGoalDialog({ open, onOpenChange, onAddGoal }: AddGoalDialogProps) {
   const [goalData, setGoalData] = useState({
     title: "",
     category: "",
@@ -29,8 +30,22 @@ export default function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps
   })
 
   const handleSubmit = () => {
-    // Here you would typically save the goal to your state or database
-    console.log("New goal:", goalData)
+    if (!goalData.title || !goalData.category) {
+      return // Don't submit if required fields are missing
+    }
+
+    // Create a new goal object
+    const newGoal = {
+      id: Date.now(), // Use timestamp as a simple unique ID
+      title: goalData.title,
+      progress: 0,
+      dueDate: goalData.dueDate ? new Date(goalData.dueDate).toLocaleDateString() : "Not set",
+      category: goalData.category,
+      description: goalData.description,
+    }
+
+    // Call the parent component's handler to add the goal
+    onAddGoal(newGoal)
 
     // Reset form and close dialog
     setGoalData({

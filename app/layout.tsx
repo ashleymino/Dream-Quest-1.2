@@ -22,7 +22,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <div className="min-h-screen bg-gradient-to-b from-purple-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
+          <div className="min-h-screen bg-dreamy-gradient bg-size-200 animate-dreamy-bg dark:from-indigo-950 dark:via-blue-950 dark:to-purple-950">
+            <div className="dreamy-clouds"></div>
             <Navigation />
             <main>{children}</main>
           </div>

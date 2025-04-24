@@ -18,17 +18,31 @@ interface AddTaskDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   selectedDate?: Date
+  onAddTask: (task: any) => void
 }
 
-export default function AddTaskDialog({ open, onOpenChange, selectedDate }: AddTaskDialogProps) {
+export default function AddTaskDialog({ open, onOpenChange, selectedDate, onAddTask }: AddTaskDialogProps) {
   const [taskData, setTaskData] = useState({
     title: "",
     priority: "",
   })
 
   const handleSubmit = () => {
-    // Here you would typically save the task to your state or database
-    console.log("New task:", { ...taskData, date: selectedDate })
+    if (!taskData.title || !taskData.priority) {
+      return // Don't submit if required fields are missing
+    }
+
+    // Create a new task object
+    const newTask = {
+      id: Date.now(), // Use timestamp as a simple unique ID
+      title: taskData.title,
+      completed: false,
+      priority: taskData.priority,
+      date: selectedDate || new Date(),
+    }
+
+    // Call the parent component's handler to add the task
+    onAddTask(newTask)
 
     // Reset form and close dialog
     setTaskData({
